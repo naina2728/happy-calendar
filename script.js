@@ -216,7 +216,10 @@ function closeNoteModal() {
 // Export entries to JSON file
 function exportEntries() {
     const entries = getEntries();
-    const dataStr = JSON.stringify(entries, null, 2);
+    const exportData = {
+        happyCalendarEntries: entries
+    };
+    const dataStr = JSON.stringify(exportData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
@@ -241,6 +244,22 @@ function importEntries(file) {
                 return;
             }
             
+            // Handle both new format (with happyCalendarEntries key) and old format (plain object)
+            let entriesToImport;
+            if (importedData.happyCalendarEntries && typeof importedData.happyCalendarEntries === 'object') {
+                // New format with happyCalendarEntries key
+                entriesToImport = importedData.happyCalendarEntries;
+            } else {
+                // Old format - plain object (for backward compatibility)
+                entriesToImport = importedData;
+            }
+            
+            // Validate entries structure
+            if (typeof entriesToImport !== 'object' || Array.isArray(entriesToImport)) {
+                alert('Invalid file format. The file should contain happyCalendarEntries data.');
+                return;
+            }
+            
             // Ask user if they want to merge or replace
             const currentEntries = getEntries();
             const hasExistingEntries = Object.keys(currentEntries).length > 0;
@@ -249,15 +268,15 @@ function importEntries(file) {
                 const choice = confirm('You have existing entries. Click OK to replace all data, or Cancel to merge with existing entries.');
                 if (choice) {
                     // Replace all data
-                    saveEntries(importedData);
+                    saveEntries(entriesToImport);
                 } else {
                     // Merge data (imported data takes precedence for overlapping dates)
-                    const mergedData = { ...currentEntries, ...importedData };
+                    const mergedData = { ...currentEntries, ...entriesToImport };
                     saveEntries(mergedData);
                 }
             } else {
                 // No existing data, just import
-                saveEntries(importedData);
+                saveEntries(entriesToImport);
             }
             
             renderCalendar();
