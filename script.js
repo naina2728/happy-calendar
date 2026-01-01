@@ -213,6 +213,63 @@ function closeNoteModal() {
     modal.classList.remove('show');
 }
 
+// Export entries to JSON file
+function exportEntries() {
+    const entries = getEntries();
+    const dataStr = JSON.stringify(entries, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `happy-calendar-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Import entries from JSON file
+function importEntries(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            // Validate that it's an object (not array or other type)
+            if (typeof importedData !== 'object' || Array.isArray(importedData)) {
+                alert('Invalid file format. Please select a valid JSON file.');
+                return;
+            }
+            
+            // Ask user if they want to merge or replace
+            const currentEntries = getEntries();
+            const hasExistingEntries = Object.keys(currentEntries).length > 0;
+            
+            if (hasExistingEntries) {
+                const choice = confirm('You have existing entries. Click OK to replace all data, or Cancel to merge with existing entries.');
+                if (choice) {
+                    // Replace all data
+                    saveEntries(importedData);
+                } else {
+                    // Merge data (imported data takes precedence for overlapping dates)
+                    const mergedData = { ...currentEntries, ...importedData };
+                    saveEntries(mergedData);
+                }
+            } else {
+                // No existing data, just import
+                saveEntries(importedData);
+            }
+            
+            renderCalendar();
+            alert('Data imported successfully!');
+        } catch (error) {
+            alert('Error reading file. Please make sure it\'s a valid JSON file.');
+            console.error('Import error:', error);
+        }
+    };
+    reader.readAsText(file);
+}
+
 // Setup event listeners
 function setupEventListeners() {
     // Previous month button
@@ -233,6 +290,19 @@ function setupEventListeners() {
             currentYear++;
         }
         renderCalendar();
+    });
+    
+    // Export button
+    document.getElementById('exportBtn').addEventListener('click', exportEntries);
+    
+    // Import file input
+    document.getElementById('importFile').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            importEntries(file);
+            // Reset the input so the same file can be imported again if needed
+            e.target.value = '';
+        }
     });
     
     // Close modal buttons

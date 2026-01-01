@@ -62,6 +62,34 @@ header h1 {
     background: #ff8fa3;
 }
 
+.import-export-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.import-export-btn {
+    background: #ffe4e1;
+    border: 2px solid #ffb3ba;
+    border-radius: 15px;
+    padding: 8px 20px;
+    font-size: 0.95em;
+    cursor: pointer;
+    font-family: inherit;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.import-export-btn:hover {
+    background: #ffb3ba;
+}
+
+.import-label {
+    display: inline-block;
+}
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);

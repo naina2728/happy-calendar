@@ -22,6 +22,14 @@
             <button id="nextMonth" class="nav-btn">Next →</button>
         </div>
         
+        <div class="import-export-controls">
+            <button id="exportBtn" class="import-export-btn">Export Data</button>
+            <label for="importFile" class="import-export-btn import-label">
+                Import Data
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </label>
+        </div>
+        
         <div class="calendar-grid" id="calendarGrid"></div>
         
         <!-- Modal for sticky note -->
