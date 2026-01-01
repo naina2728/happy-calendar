@@ -14,20 +14,19 @@
         <header>
             <h1>✨ Happy Calendar ✨</h1>
             <p class="subtitle">What made you happy today?</p>
+            <div class="import-export-controls">
+                <button id="exportBtn" class="import-export-btn">💾 Export Data</button>
+                <label for="importFile" class="import-export-btn import-label">
+                    📥 Import Data
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </label>
+            </div>
         </header>
         
         <div class="calendar-controls">
             <button id="prevMonth" class="nav-btn">← Previous</button>
             <h2 id="currentMonth" class="month-display"></h2>
             <button id="nextMonth" class="nav-btn">Next →</button>
-        </div>
-        
-        <div class="import-export-controls">
-            <button id="exportBtn" class="import-export-btn">Export Data</button>
-            <label for="importFile" class="import-export-btn import-label">
-                Import Data
-                <input type="file" id="importFile" accept=".json" style="display: none;">
-            </label>
         </div>
         
         <div class="calendar-grid" id="calendarGrid"></div>
